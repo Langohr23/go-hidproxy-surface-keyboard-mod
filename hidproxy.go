@@ -687,6 +687,7 @@ func Start(config Config) {
 			isMouse := false
 			isKeyboard := false
 			for k := range dev.Capabilities {
+//				log.Info("Device %t , Dev Name %s", dev.Name,  k.Name)
 				if k.Name == "EV_REL" {
 					isMouse = true
 				}
@@ -694,6 +695,7 @@ func Start(config Config) {
 					isKeyboard = true
 				}
 			}
+			
 			log.Debugf("Device %s (%s), capabilities: %v (mouse=%t, kbd=%t)", dev.Name, dev.Fn, dev.Capabilities, isMouse, isKeyboard)
 			if isKeyboard || isMouse {
 				devId := InputDevice{
@@ -708,10 +710,15 @@ func Start(config Config) {
 						wg.Add(1)
 					}
 					log.Debugf("isKeyboard: %t, isMouse: %t, setupMouse: %t", !isKeyboard, isMouse, config.SetupMouse)
-					if isMouse && config.SetupMouse {
+					if isMouse && config.SetupMouse && !strings.Contains(dev.Name,"Keyboard") {
 						go HandleMouse(output[devId], mouseInput, close[devId], *dev)
 						wg.Add(1)
 					}
+					 if strings.Contains(dev.Name,"Keyboard") && config.SetupKeyboard {
+                           			log.Info("Add Keyboard", dev.Name)
+	            		            	go HandleKeyboard(output[devId], keyboardInput, close[devId], uint(config.KbdRepeat), uint(config.KbdDelay), *dev)
+                            			wg.Add(1)
+                        		}
 				}
 			}
 		}
