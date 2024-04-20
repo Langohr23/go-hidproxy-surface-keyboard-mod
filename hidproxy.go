@@ -73,8 +73,8 @@ var Scancodes = map[uint16]uint16{
 	66:  65, // F8
 	67:  66, // F9
 	68:  67, // F10
-	69:  68, // F11
-	70:  69, // F12
+	87:  68, // F11
+	88:  69, // F12
 	12:  45, // -
 	13:  46, // =
 	15:  43, // TAB
@@ -82,10 +82,11 @@ var Scancodes = map[uint16]uint16{
 	27:  48, // ]
 	39:  51, // :
 	40:  52, // "
-	51:  54, // <
-	52:  55, // >
+	51:  54, // ,
+	52:  55, // .
 	53:  56, // ?
-	41:  50, // //
+	41:  53, // //
+	86: 100, // <
 	43:  49, // \
 	30:  4,  // a
 	48:  5,  // b
@@ -113,7 +114,7 @@ var Scancodes = map[uint16]uint16{
 	45:  27, // x
 	21:  28, // y
 	44:  29, // z
-	86:  49, // | & \
+	//86:  49, // | & \
 	104: 75, // PgUp
 	109: 78, // PgDn
 	102: 74, // Home
@@ -122,8 +123,8 @@ var Scancodes = map[uint16]uint16{
 	119: 72, // Pause
 	//70: 71, // ScrLk
 	99:  70,  // PrtSc
-	87:  68,  // F11
-	88:  69,  // F12
+	69:  83,  // NumLock
+	70:  71,  // ScrollLock
 	113: 127, // Mute
 	114: 129, // VolDn
 	115: 128, // VolUp
@@ -142,6 +143,22 @@ var Scancodes = map[uint16]uint16{
 	164: 232, // Play-Pause
 	165: 234, // Previous-Track
 	163: 233, // Next-Track
+	98: 84, //KeyPad Forward Slash
+	55: 85, //KeyPad Asterisk
+	74: 86, //KeyPad Minux
+	78: 87, //KeyPad Plus
+	96: 88, //KeyPad  Enter
+	79: 89, //KeyPad One
+	80: 90, //KeyPad Two
+	81: 91, //KeyPad Three
+	82: 98, //KeyPad Zero
+	83: 99, //KeyPad ,
+	75: 92, //KeyPad Four
+	76: 93, //KeyPad Five
+	77: 94, //KeyPad Six
+	71: 95, //KeyPad Seven
+	72: 96, //KeyPad Eight
+	73: 97, //KeyPad Nine
 }
 
 const (
@@ -302,7 +319,7 @@ func HandleKeyboard(output chan<- error, input chan<- InputMessage, close <-chan
 		log.Debugf("Keyboard input event: type=%d, code=%d, value=%d", event.Type, event.Code, event.Value)
 		if event.Type == evdev.EV_KEY {
 			keyEvent := evdev.NewKeyEvent(event)
-			log.Debugf("Key event: scancode=%d, keycode=%d, state=%d", keyEvent.Scancode, keyEvent.Keycode, keyEvent.State)
+			log.Info("Key event: scancode=%d, keycode=%d, state=%d", keyEvent.Scancode, keyEvent.Keycode, keyEvent.State)
 			if keyCode, ok := Scancodes[keyEvent.Scancode]; ok {
 				if keyEvent.State == 1 { // Key down
 					keyIsDown := false
