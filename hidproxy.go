@@ -473,9 +473,10 @@ func HandleMouse(output chan<- error, input chan<- InputMessage, close <-chan bo
 					mouseToSend = append(mouseToSend, 0x00)
 				}
 				if event.Code == 11 {
+					var adjust int32 = Abs(event.Value)
 					mouseToSend = append(mouseToSend, 0x00)
 					mouseToSend = append(mouseToSend, 0x00)
-					mouseToSend = append(mouseToSend, uint8(event.Value))
+					mouseToSend = append(mouseToSend, (uint8(event.Value/adjust)))
 				}
 			} else {
 				mouseToSend = append(mouseToSend, 0x00)
@@ -503,6 +504,14 @@ func HandleMouse(output chan<- error, input chan<- InputMessage, close <-chan bo
 	output <- nil
 	return nil
 
+}
+
+func Abs(x int32) int32 {
+	if x < 0 {
+                return -x
+        }
+	
+        return x
 }
 
 func SendKeyboardReports(input <-chan InputMessage) error {
